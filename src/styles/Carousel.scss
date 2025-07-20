@@ -1,0 +1,66 @@
+@import './variables.scss';
+
+.carousel-container {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto 2rem;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  flex-shrink: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: $bg-light;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px $shadow-light;
+  text-align: center;
+
+  img {
+    max-height: 300px;
+    object-fit: contain;
+    margin: 0 auto 1rem;
+  }
+
+  p {
+    font-family: $font-family;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: $text-primary;
+  }
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: $amazon-orange;
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: $border-radius;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+    outline: none;
+  }
+}
+
+.carousel-button.prev {
+  left: 1rem;
+}
+
+.carousel-button.next {
+  right: 1rem;
+}

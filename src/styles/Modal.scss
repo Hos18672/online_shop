@@ -1,0 +1,49 @@
+@import './variables.scss';
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem 1rem 2rem;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: $bg-light;
+  border-radius: $border-radius;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 10px 30px $shadow-light;
+  padding: 2rem;
+  font-family: $font-family;
+  color: $text-primary;
+  position: relative;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $amazon-orange;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    color: $amazon-orange-hover;
+    outline: none;
+  }
+}

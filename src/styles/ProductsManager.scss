@@ -1,0 +1,50 @@
+form{
+    gap: 5px;
+}
+
+.inputGroup {
+    margin-bottom: 1px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.05rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.05rem;
+    }
+  }
+
+  .buttonGroup {
+    display: flex;
+    gap: 5px;
+    flex-grow: 1;
+    margin-top: 1rem;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+    }
+  }
+  .button.save {
+    width: 100%;
+  }
+
+  .button.cancel {
+    background-color: #6c757d;
+    color: white;
+    width: 100% ;
+
+    &:hover {
+      background-color: #5a6268;
+    }
+  }

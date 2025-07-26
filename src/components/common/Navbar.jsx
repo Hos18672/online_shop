@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@clerk/clerk-react';
+import SearchBar from './../shop/SearchBar';
 import './../../styles/navbar.scss'; // adjust path as needed
 // Import your flag images
 import flagEN from './../../assets/flags/en.png';
@@ -29,6 +30,8 @@ const Navbar = () => {
   return (
     <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="navbar-container">
+        <div className="title">Your shop</div>
+      <SearchBar />
         <div className="navbar-links">
           <Link to="/">{t('home')}</Link>
           <Link to="/cart">{t('cart')}</Link>
@@ -65,7 +68,6 @@ const Navbar = () => {
               </ul>
             )}
           </div>
-          <Link to="/auth" className="auth-link">{t('auth')}</Link>
         </div>
       </div>
     </nav>

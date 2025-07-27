@@ -12,7 +12,7 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
 
   const lang = i18n.language || 'en';
-  const isRtl = lang === 'fa'; // Check if language is Farsi for RTL
+  const isRtl = lang === 'fa';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,30 +32,36 @@ const HomePage = () => {
     category[`name_${lang}`] || category.name_en || category.name || t('unnamed');
 
   return (
-    <div className="homepage" dir={isRtl ? 'rtl' : 'ltr'}>      <section className="homepage__section">
-        <h2 className="homepage__section-title">{t('featured_products')}</h2>
-        <Carousel items={products} />
-      </section>
+    <div className={`homepage ${isRtl ? 'rtl' : 'ltr'}`}>
+      <Carousel items={products} className="homepage__carousel" />
       <section className="homepage__section">
-        <h2 className="homepage__section-title">{t('All')}</h2>
-        <div className="product-grid">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <h2 className="homepage__section-title">{t('featured_products')}</h2>
+        <div className="homepage__product-grid">
+          {products.slice(0, 8).map((product) => (
+            <ProductCard key={product.id} product={product} className="homepage__product-card" />
           ))}
         </div>
       </section>
-      {categories.map((category) => (
-        <section key={category.id} className="homepage__section">
-          <h2 className="homepage__section-title">{getTranslatedName(category)}</h2>
-          <div className="product-grid">
-            {products
-              .filter((p) => p.category_id === category.id)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} />
+      {categories.map((category) => {
+        const categoryProducts = products.filter((p) => p.category_id === category.id);
+        return (
+          <section key={category.id} className="homepage__section">
+            <div className="homepage__section-header">
+              <h2 className="homepage__section-title">{getTranslatedName(category)}</h2>
+              {categoryProducts.length > 4 && (
+                <a href={`/category/${category.id}`} className="homepage__view-all">
+                  {t('view_all')}
+                </a>
+              )}
+            </div>
+            <div className="homepage__product-grid">
+              {categoryProducts.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} className="homepage__product-card" />
               ))}
-          </div>
-        </section>
-      ))}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 };

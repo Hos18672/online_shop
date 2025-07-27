@@ -200,5 +200,10 @@
   "wishlist_empty": "Your wishlist is empty",
   "cart_empty": "Your cart is empty",
   "search_results": "Search Results",
-  "no_results": "No results found"
+  "no_results": "No results found",
+   "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "save": "save"
+  
 }

@@ -1,10 +1,12 @@
 {
+  "homepage": "https://hos18672.github.io/online_shop",
   "dependencies": {
     "@clerk/clerk-react": "^5.35.3",
     "@hookform/resolvers": "^5.1.1",
     "@supabase/supabase-js": "^2.52.0",
     "@vercel/analytics": "^1.5.0",
     "axios": "^1.10.0",
+    "gh-pages": "^6.3.0",
     "gsap": "^3.13.0",
     "i18next": "^25.3.2",
     "lucide-react": "^0.525.0",
@@ -36,7 +38,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": {
     "production": [

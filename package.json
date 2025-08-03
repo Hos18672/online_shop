@@ -1,6 +1,7 @@
 {
   "homepage": "https://hos18672.github.io/online_shop",
   "dependencies": {
+    "typescript": "^4.9.5",
     "@clerk/clerk-react": "^5.35.3",
     "@hookform/resolvers": "^5.1.1",
     "@supabase/supabase-js": "^2.52.0",

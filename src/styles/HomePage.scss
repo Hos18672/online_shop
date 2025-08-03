@@ -14,6 +14,7 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
   min-height: 100vh;
   overflow-x: hidden;
+  padding-bottom: 10px;
 
   &.rtl {
     direction: rtl;
@@ -30,6 +31,13 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 }
 
+.homepage__loader,
+.homepage__error {
+  text-align: center;
+  font-size: 1.25rem;
+  padding: 3rem 0;
+  color: $text-color;
+}
 
 
 .homepage__hero-title {
@@ -120,7 +128,7 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1.5rem;
   }
 }

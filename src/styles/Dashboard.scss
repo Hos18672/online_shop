@@ -261,7 +261,7 @@ $modal-bg: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1200;
 }
 
 .dashboard__modal {
@@ -269,7 +269,7 @@ $modal-bg: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   width: 90%;
-  max-width: 400px;
+  max-width: 60%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: 90%;
   overflow: auto !important;

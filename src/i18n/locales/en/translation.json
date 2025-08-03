@@ -204,6 +204,20 @@
    "edit": "Edit",
     "delete": "Delete",
     "view": "View",
-    "save": "save"
-  
+    "save": "save",
+  "sort_price_low_high": "Sort by Price: Low to High",
+  "sign_in": "Sign In",
+  "sign_up": "Sign Up",
+  "sign_out": "Sign Out",
+  "loading_more": "Loading more...",
+  "load_more": "Load More",
+  "no_more_results": "No more results",
+  "signin_with_email": "Sign in with Email",
+  "signin_with_google": "Sign in with Google",
+  "signin_with_facebook": "Sign in with Facebook",
+  "email": "Email",
+  "password": "Password",
+  "singup_with_email": "Sign up with Email",
+  "signup_with_google": "Sign up with Google"
+
 }

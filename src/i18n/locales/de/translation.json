@@ -218,5 +218,15 @@
     "loading_more": "Weitere laden...",
     "load_more": "Mehr laden",
     "no_more_results": "Keine weiteren Ergebnisse",
-    "sort_price_low_high": "Preis: Niedrig bis Hoch"
+    "sort_price_low_high": "Preis: Niedrig bis Hoch",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "sign_in": "Anmelden",
+    "sign_up": "Registrieren",
+    "sign_out": "Abmelden",
+    "signin_with_email": "Mit E-Mail anmelden",
+    "signin_with_google": "Mit Google anmelden",
+    "signin_with_facebook": "Mit Facebook anmelden",
+    "singup_with_email": "Mit E-Mail registrieren",
+    "signup_with_google": "Mit Google registrieren"
 }

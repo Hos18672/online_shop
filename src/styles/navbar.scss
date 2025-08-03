@@ -5,6 +5,7 @@
     position: sticky;
     top: 0;
     z-index: 1100;
+    align-items: center;
 
     &-container {
         display: flex;
@@ -13,8 +14,8 @@
         max-width: 1280px;
         margin: 0 auto;
         padding: 0 16px;
-        flex-wrap: wrap;
         gap: 16px;
+        align-items: center;
     }
 
     &__title {
@@ -57,7 +58,7 @@
     &__search-desktop {
         flex: 1;
         max-width: 800px;
-        margin: 0 24px;
+        margin: 0 5px;
 
         @media (max-width: 767px) {
             display: none;
@@ -129,11 +130,11 @@
         &--rtl {
             position: absolute;
             right: auto;
-             top: 25%;
+            top: 25%;
             left: 16px;
             width: 24px;
             height: 24px;
-             color: #718096;
+            color: #718096;
         }
     }
 
@@ -270,9 +271,21 @@
         margin-right: 10px;
     }
 
+    .navbar__link {
+        color: #333;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+
+        &--active {
+            font-weight: bold;
+            border-bottom: 2px solid #007bff; // or your theme's highlight color
+        }
+    }
+
     &__links {
         display: flex;
-        gap: 24px;
+        gap: 5px;
+        align-items: center;
 
         a {
             text-decoration: none;
@@ -500,4 +513,23 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+.navbar__logout-btn {
+    background: transparent;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #d32f2f;
+    }
+}
+
+.navbar__sidebar-logout {
+    margin-top: 1.5rem;
+    padding-left: 1rem;
 }

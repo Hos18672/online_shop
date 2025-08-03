@@ -218,5 +218,15 @@
   "loading_more": "در حال بارگذاری بیشتر...",
   "load_more": "بارگذاری بیشتر",
   "no_more_results": "نتیجه دیگری وجود ندارد",
-  "sort_price_low_high": "قیمت: کم به زیاد"
+  "sort_price_low_high": "قیمت: کم به زیاد",
+  "sign_in": "ورود",
+  "sign_up": "ثبت‌ نام",  
+  "sign_out": "خروج",
+  "singin_with_email": "ورود با ایمیل",
+  "signin_with_google": "ورود با گوگل",
+  "signin_with_facebook": "ورود با فیسبوک",
+  "email": "ایمیل",
+  "password": "رمز عبور",
+  "singup_with_email": "ثبت‌ نام با ایمیل",
+  "signup_with_google": "ثبت‌ نام با گوگل"
 }

@@ -4,185 +4,117 @@ import './../../styles/Carousel.scss';
 
 const Carousel = ({ items, autoPlayInterval = 5000 }) => {
   const { t, i18n } = useTranslation();
+  const isRtl = (i18n.language || 'en') === 'fa';
   const lang = i18n.language || 'en';
-  const isRtl = lang === 'fa';
-
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(items.length);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [translateX, setTranslateX] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
 
   const carouselRef = useRef(null);
-  const autoPlayRef = useRef(null);
   const trackRef = useRef(null);
+  const autoPlayRef = useRef(null);
 
-  // Create multiple copies for smooth infinite scrolling
-  const extendedItems = [...items, ...items, ...items];
-  const startingIndex = items.length; // Start at the second copy
+  // Determine how many slides to show based on container width
+  const slidesToShow = () => {
+    const w = carouselRef.current?.offsetWidth || window.innerWidth;
+    if (w <= 640) return 1;
+    if (w <= 1024) return 3;
+    return 3;
+  };
 
+  const slideWidth = () => (100 / slidesToShow());
+  const centerOffset = () => Math.floor(slidesToShow() / 2);
+
+  // Initialize position to center of the middle copy
   useEffect(() => {
-    // Initialize position to the middle copy
+    const idx = items.length;
+    setCurrentIndex(idx);
     if (trackRef.current) {
-      const slideWidth = getSlideWidth();
-      const initialTranslate = startingIndex * slideWidth;
       trackRef.current.style.transition = 'none';
-      trackRef.current.style.transform = `translateX(${isRtl ? '' : '-'}${initialTranslate}%)`;
-      setCurrentIndex(startingIndex);
-      
-      // Re-enable transitions after initial positioning
+      trackRef.current.style.transform = `translateX(${-(idx - centerOffset()) * slideWidth()}%)`;
       setTimeout(() => {
-        if (trackRef.current) {
-          trackRef.current.style.transition = 'transform 0.4s ease-in-out';
-        }
+        trackRef.current.style.transition = 'transform 0.4s ease';
       }, 50);
     }
-  }, [items, isRtl]);
+  }, [items]);
 
+  // Auto-play
   useEffect(() => {
-    if (autoPlayInterval && !isDragging && !isAnimating) {
-      autoPlayRef.current = setInterval(() => {
-        nextSlide();
-      }, autoPlayInterval);
+    if (autoPlayInterval && !isDragging) {
+      autoPlayRef.current = setInterval(() => goTo(currentIndex + 1), autoPlayInterval);
     }
-    
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [currentIndex, autoPlayInterval, isDragging, isAnimating]);
+    return () => clearInterval(autoPlayRef.current);
+  }, [currentIndex, isDragging]);
 
-  // Clear auto-play when dragging or animating
-  useEffect(() => {
-    if (isDragging || isAnimating) {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    }
-  }, [isDragging, isAnimating]);
-
-  const slidesToShow = (width) => {
-    if (width <= 640) return 1;
-    if (width <= 1024) return 3;
-    return 5;
-  };
-
-  const getSlideWidth = () => {
-    const width = carouselRef.current?.offsetWidth || 1024;
-    return 100 / slidesToShow(width);
-  };
-
-  const nextSlide = () => {
+  // Navigate to a specific slide index
+  const goTo = (index) => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentIndex((prev) => prev + 1);
-    setTranslateX(0);
+    setCurrentIndex(index);
+    setDragOffset(0);
   };
 
-  const prevSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex((prev) => prev - 1);
-    setTranslateX(0);
-  };
+  const next = () => goTo(currentIndex + 1);
+  const prev = () => goTo(currentIndex - 1);
 
+  // After transition, reset position for infinite scroll
   const handleTransitionEnd = () => {
     setIsAnimating(false);
-    
-    // Reset position when reaching the boundaries for infinite effect
-    if (currentIndex >= items.length * 2) {
-      // Jumped too far forward, reset to middle copy
-      const newIndex = currentIndex - items.length;
-      setCurrentIndex(newIndex);
-      if (trackRef.current) {
-        trackRef.current.style.transition = 'none';
-        const slideWidth = getSlideWidth();
-        trackRef.current.style.transform = `translateX(${isRtl ? '' : '-'}${newIndex * slideWidth}%)`;
-        setTimeout(() => {
-          if (trackRef.current) {
-            trackRef.current.style.transition = 'transform 0.4s ease-in-out';
-          }
-        }, 50);
-      }
-    } else if (currentIndex < items.length) {
-      // Jumped too far backward, reset to middle copy
-      const newIndex = currentIndex + items.length;
-      setCurrentIndex(newIndex);
-      if (trackRef.current) {
-        trackRef.current.style.transition = 'none';
-        const slideWidth = getSlideWidth();
-        trackRef.current.style.transform = `translateX(${isRtl ? '' : '-'}${newIndex * slideWidth}%)`;
-        setTimeout(() => {
-          if (trackRef.current) {
-            trackRef.current.style.transition = 'transform 0.4s ease-in-out';
-          }
-        }, 50);
-      }
+    const len = items.length;
+    let idx = currentIndex;
+    if (idx >= len * 2) idx -= len;
+    if (idx < len) idx += len;
+    if (idx !== currentIndex) {
+      setCurrentIndex(idx);
+      trackRef.current.style.transition = 'none';
+      trackRef.current.style.transform = `translateX(${-(idx - centerOffset()) * slideWidth()}%)`;
+      setTimeout(() => {
+        trackRef.current.style.transition = 'transform 0.4s ease';
+      }, 50);
     }
   };
 
-  const handleTouchStart = (e) => {
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
-    }
+  // Drag / touch handlers
+  const onDragStart = (e) => {
+    clearInterval(autoPlayRef.current);
     setIsDragging(true);
     setStartX(e.type === 'touchstart' ? e.touches[0].clientX : e.clientX);
   };
 
-  const handleTouchMove = (e) => {
+  const onDragMove = (e) => {
     if (!isDragging) return;
-    const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-    const diff = startX - currentX;
-    setTranslateX(diff);
+    const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    setDragOffset(startX - x);
   };
 
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
+  const onDragEnd = () => {
     setIsDragging(false);
-    
-    if (Math.abs(translateX) > 100) {
-      translateX > 0 ? nextSlide() : prevSlide();
+    const threshold = (carouselRef.current.offsetWidth || window.innerWidth) / 4;
+    if (Math.abs(dragOffset) > threshold) {
+      dragOffset > 0 ? next() : prev();
     } else {
-      setTranslateX(0);
+      setDragOffset(0);
     }
   };
 
-  const goToSlide = (index) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    // Map the dot index to the middle copy
-    const targetIndex = startingIndex + index;
-    setCurrentIndex(targetIndex);
-    setTranslateX(0);
-  };
-
-  // Get the actual slide index for dot indicator
-  const getActualSlideIndex = () => {
-    return ((currentIndex - startingIndex) % items.length + items.length) % items.length;
-  };
+  // Calculate the actual index for dots
+  const actualIndex = ((currentIndex - items.length) % items.length + items.length) % items.length;
 
   return (
     <div
       className={`carousel-container ${isRtl ? 'rtl' : 'ltr'}`}
       ref={carouselRef}
-      aria-label={t('featured_products')}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleTouchStart}
-      onMouseMove={handleTouchMove}
-      onMouseUp={handleTouchEnd}
-      onMouseLeave={handleTouchEnd}
+      onMouseDown={onDragStart}
+      onTouchStart={onDragStart}
+      onMouseMove={onDragMove}
+      onTouchMove={onDragMove}
+      onMouseUp={onDragEnd}
+      onMouseLeave={onDragEnd}
+      onTouchEnd={onDragEnd}
     >
-      <button
-        onClick={prevSlide}
-        className="carousel-button prev"
-        aria-label={t('previous_slide')}
-        type="button"
-      >
-        {isRtl ? '›' : '‹'}
-      </button>
+      <button className="carousel-button prev" onClick={prev} aria-label={t('previous_slide')}>‹</button>
 
       <div className="carousel-track-wrapper">
         <div
@@ -190,40 +122,31 @@ const Carousel = ({ items, autoPlayInterval = 5000 }) => {
           className="carousel-track"
           onTransitionEnd={handleTransitionEnd}
           style={{
-            transform: `translateX(${(isRtl ? '' : '-') +
-              ((currentIndex * getSlideWidth()) +
-                (isRtl ? -translateX : translateX) /
-                  (carouselRef.current?.offsetWidth || 1))}%)`,
-            transition: isDragging ? 'none' : 'transform 0.4s ease-in-out',
-            width: `${extendedItems.length * getSlideWidth()}%`,
+            transform: `translateX(${-(currentIndex - centerOffset()) * slideWidth() + (-dragOffset / (carouselRef.current?.offsetWidth || window.innerWidth) * 100)}%)`,
           }}
         >
-          {extendedItems.map((item, index) => {
-            const visibleSlides = slidesToShow(carouselRef.current?.offsetWidth || 1024);
-            const centerOffset = Math.floor(visibleSlides / 2);
-            const isCentered =
-              index === (currentIndex -2 + centerOffset) % extendedItems.length;
-
+          {[...items, ...items, ...items].map((item, idx) => {
+            const isCenter = idx === currentIndex;
             return (
               <div
-                key={`${item.id || item.name}-${index}`}
-                className={`carousel-slide ${isCentered ? 'centered' : ''}`}
-                style={{ width: `${getSlideWidth() + .26}%` }}
+                key={`${item.id || item.name}-${idx}`}
+                className={`carousel-slide ${isCenter ? 'centered' : ''}`}
+                style={{ flex: `0 0 ${slideWidth()}%` }}
               >
                 <div className="carousel-product-card">
                   <div className="carousel-image-wrapper">
                     <img
                       src={item.image_url || '/placeholder-image.jpg'}
-                      alt={item.name || t('unnamed_product')}
+                      alt={item.name_en || t('unnamed_product')}
                       loading="lazy"
                     />
                   </div>
                   <div className="carousel-product-info">
                     <h3 className="carousel-product-title">
-                      {item.name || t('unnamed_product')}
+                      {item[`name_${lang}`] || t('unnamed_product')}
                     </h3>
                     <p className="carousel-product-price">
-                      ${item.price || '0.00'}
+                      €{item.price || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -232,23 +155,14 @@ const Carousel = ({ items, autoPlayInterval = 5000 }) => {
           })}
         </div>
       </div>
-
-      <button
-        onClick={nextSlide}
-        className="carousel-button next"
-        aria-label={t('next_slide')}
-        type="button"
-      >
-        {isRtl ? '‹' : '›'}
-      </button>
-
+      <button className="carousel-button next" onClick={next} aria-label={t('next_slide')}>›</button>
       <div className="carousel-dots">
-        {items.map((_, index) => (
+        {items.map((_, idx) => (
           <button
-            key={index}
-            className={`carousel-dot ${index === getActualSlideIndex() ? 'active' : ''}`}
-            onClick={() => goToSlide(index)}
-            aria-label={`${t('go_to_slide')} ${index + 1}`}
+            key={idx}
+            className={`carousel-dot ${idx === actualIndex ? 'active' : ''}`}
+            onClick={() => goTo(items.length + idx)}
+            aria-label={`${t('go_to_slide')} ${idx + 1}`}
             type="button"
           />
         ))}

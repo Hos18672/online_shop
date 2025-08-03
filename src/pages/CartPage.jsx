@@ -9,7 +9,7 @@ const CartPage = () => {
   const { items, removeItem, updateQuantity } = useCartStore();
   const lang = i18n.language || 'en';
   const isRtl = lang === 'fa'; // Check for Farsi (RTL)
-
+  console.log('Cart items:', items);
   // Aggregate items by id to combine quantities
   const aggregatedItems = items.reduce((acc, item) => {
     const existingItem = acc.find((i) => i.id === item.id);
@@ -22,7 +22,7 @@ const CartPage = () => {
   }, []);
 
   const totalPrice = aggregatedItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
-  const productName = (item) => item[`name_en`] || item.name_en || t('unnamed');
+  const productName = (item) => item[`name_${lang}`] || item.name_en || t('unnamed');
 
   return (
     <div className="cart-page" role="main" aria-label={t('cart')} dir={isRtl ? 'rtl' : 'ltr'}>
@@ -99,7 +99,7 @@ const CartPage = () => {
           </ul>
           <div className="cart-page__summary">
             <p className="cart-page__total">{t('total')}: ${totalPrice}</p>
-            <Link
+      {/* '      <Link
               to="/checkout"
               className="cart-page__checkout-btn"
               aria-label={t('proceed_to_checkout')}
@@ -117,7 +117,7 @@ const CartPage = () => {
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
               {t('proceed_to_checkout')}
-            </Link>
+            </Link>' */}
           </div>
         </>
       )}

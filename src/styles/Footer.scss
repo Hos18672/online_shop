@@ -1,0 +1,48 @@
+.footer {
+  background-color: #1f2937; // Tailwind's gray-800 equivalent
+  color: #d1d5db; // Tailwind's gray-300
+  padding: 2rem 1.5rem;
+
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  &__text {
+    text-align: center;
+
+    @media (min-width: 768px) {
+      text-align: left;
+    }
+
+    p {
+      margin: 0.2rem 0;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__social {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.5rem;
+
+    a {
+      color: #d1d5db;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  }
+}

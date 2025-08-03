@@ -4,12 +4,15 @@ import Carousel from '../components/shop/Carousel';
 import ProductCard from '../components/shop/ProductCard';
 import { getProducts } from '../services/productService';
 import { getCategories } from '../services/categoryService';
+import Loader from '../components/common/Loader';
 import '../styles/HomePage.scss';
 
 const HomePage = () => {
   const { t, i18n } = useTranslation();
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categoriesWithProducts, setCategoriesWithProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const lang = i18n.language || 'en';
   const isRtl = lang === 'fa';
@@ -17,12 +20,21 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsData = await getProducts();
-        const categoriesData = await getCategories();
+        const [productsData, categoriesData] = await Promise.all([
+          getProducts(),
+          getCategories()
+        ]);
         setProducts(productsData);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+
+        const categoriesWithAtLeastOneProduct = categoriesData.filter(category =>
+          productsData.some(product => product.category_id === category.id)
+        );
+        setCategoriesWithProducts(categoriesWithAtLeastOneProduct);
+      } catch (err) {
+        console.error('Error loading homepage data:', err);
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -31,9 +43,14 @@ const HomePage = () => {
   const getTranslatedName = (category) =>
     category[`name_${lang}`] || category.name_en || category.name || t('unnamed');
 
+ if (loading) return <Loader />;
+   if (error) return <div className="homepage__error">{t('error_loading_data')}</div>;
+ 
   return (
     <div className={`homepage ${isRtl ? 'rtl' : 'ltr'}`}>
+    
       <Carousel items={products} className="homepage__carousel" />
+
       <section className="homepage__section">
         <h2 className="homepage__section-title">{t('featured_products')}</h2>
         <div className="homepage__product-grid">
@@ -42,8 +59,9 @@ const HomePage = () => {
           ))}
         </div>
       </section>
-      {categories.map((category) => {
-        const categoryProducts = products.filter((p) => p.category_id === category.id);
+
+      {categoriesWithProducts.map((category) => {
+        const categoryProducts = products.filter(p => p.category_id === category.id);
         return (
           <section key={category.id} className="homepage__section">
             <div className="homepage__section-header">

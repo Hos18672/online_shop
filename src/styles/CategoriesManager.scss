@@ -2,9 +2,7 @@
   max-width: 700px;
   margin: 5px auto;
   padding: 2rem;
-  background-color: #f9fafb;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   max-height: 100%;
 }
 
@@ -23,24 +21,35 @@
 }
 
 .inputGroup {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: start;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
 
   label {
     font-weight: 500;
     margin-bottom: 0.5rem;
+    grid-column: 1;
   }
 
-  input {
+  input,
+  textarea {
     padding: 0.65rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
+    width: 100%;
+    resize: vertical; // allow vertical resizing if needed
 
     &:focus {
       border-color: #2563eb;
       outline: none;
     }
+  }
+
+  textarea {
+    min-height: 120px; // you can adjust as needed
   }
 }
 

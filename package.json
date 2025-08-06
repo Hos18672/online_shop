@@ -1,5 +1,5 @@
 {
-  "homepage": "https://hos18672.github.io/online_shop",
+  "homepage": "https://hos18672.github.io/online_shop2",
   "dependencies": {
     "typescript": "^4.9.5",
     "@clerk/clerk-react": "^5.35.3",
@@ -53,5 +53,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "engines": {
+  "node": "20.9.0"
+}
+
 }

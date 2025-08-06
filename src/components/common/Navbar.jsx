@@ -176,7 +176,6 @@ const Navbar = () => {
           dir={isRtl ? "rtl" : "ltr"}
         >
           <div className="navbar__sidebar-header">
-            <div className="navbar__sidebar-title">{t("menu")}</div>
             <button
               className="navbar__sidebar-close"
               onClick={toggleSidebar}
@@ -198,7 +197,6 @@ const Navbar = () => {
           <div className="navbar__sidebar-content">
             {/* Navigation Links */}
             <div className="navbar__sidebar-section">
-              <div className="navbar__sidebar-label">{t("navigation")}</div>
               <ul className="navbar__sidebar-nav">
                 <li>
                   <NavLink

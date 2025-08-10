@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@clerk/clerk-react";
-import { searchProducts } from "../../services/productService";
 import { getCategories } from "../../services/categoryService";
 import useCartStore from "../../store/cartStore";
+import SearchInput from "./SearchInput";
 import "./../../styles/navbar.scss";
 import flagEN from "./../../assets/flags/en.png";
 import flagDE from "./../../assets/flags/de.png";
@@ -22,8 +22,6 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [priceRange, setPriceRange] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const isMounted = useRef(true);
   const searchResultsRef = useRef(null);
   const sidebarRef = useRef(null);
@@ -39,8 +37,6 @@ const Navbar = () => {
     if (clearTimeoutRef.current) clearTimeout(clearTimeoutRef.current);
     clearTimeoutRef.current = setTimeout(() => {
       setSearch("");
-      setSearchResults([]);
-      setLoading(false);
       setSidebarOpen(false);
       setLangDropdownOpen(false);
     }, 200);
@@ -55,7 +51,6 @@ const Navbar = () => {
         !searchResultsRef.current.contains(event.target)
       ) {
         setSearch("");
-        setSearchResults([]);
       }
       if (
         langDropdownRef.current &&
@@ -93,33 +88,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Handle search
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (search.trim() === "") {
-        setSearchResults([]);
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        const results = await searchProducts({
-          name: search,
-          category,
-          priceRange,
-        });
-        if (isMounted.current) setSearchResults(results);
-      } catch (error) {
-        console.error("Error searching products:", error);
-        if (isMounted.current) setSearchResults([]);
-      } finally {
-        if (isMounted.current) setLoading(false);
-      }
-    };
-    const debounce = setTimeout(fetchSearchResults, 300);
-    return () => clearTimeout(debounce);
-  }, [search, category, priceRange]);
-
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     setDropdownOpen(false);
@@ -142,8 +110,6 @@ const Navbar = () => {
 
   const getTranslatedName = (obj) =>
     obj[`name_${lang}`] || obj.name_en || obj.name || t("unnamed");
-
-  const handleSearch = (e) => e.preventDefault();
 
   return (
     <nav className="navbar" role="navigation" aria-label="Main navigation">
@@ -241,78 +207,6 @@ const Navbar = () => {
                 )}
               </ul>
             </div>
-
-            {/* Search */}
-            <div className="navbar__sidebar-section">
-              <form onSubmit={handleSearch} className="navbar__search-form" aria-label={t("product_search")}>
-                <div className="navbar__search-container">
-                  <div className="navbar__search-input-wrapper">
-                    <input
-                      id="sidebar-search"
-                      type="text"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder={t("search_placeholder")}
-                      className="navbar__search-input"
-                      aria-label={t("search_products")}
-                      autoComplete="off"
-                      dir={isRtl ? "rtl" : "ltr"}
-                    />
-                    <svg
-                      className={isRtl ? "navbar__search-icon--rtl" : "navbar__search-icon"}
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                  </div>
-                </div>
-                <div
-                  ref={searchResultsRef}
-                  className={
-                    searchResults.length > 0 || loading
-                      ? "navbar__search-results--open"
-                      : "navbar__search-results"
-                  }
-                >
-                  {loading ? (
-                    <div className="navbar__search-loading">
-                      <div className="navbar__spinner" />
-                      {t("loading")}
-                    </div>
-                  ) : searchResults.length === 0 && search.trim() !== "" ? (
-                    <div className="navbar__search-no-results">
-                      {t("no_results")}
-                    </div>
-                  ) : (
-                    searchResults.map((product) => (
-                      <Link
-                        to={`/product/${product.id}`}
-                        key={product.id}
-                        className="navbar__search-result-item"
-                        onClick={() => setSidebarOpen(false)}
-                      >
-                        <img
-                          src={product.image_url || "/placeholder-image.jpg"}
-                          alt={getTranslatedName(product)}
-                          className="navbar__search-result-image"
-                          width="40"
-                          height="40"
-                        />
-                        <span className="navbar__search-result-name">
-                          {getTranslatedName(product)}
-                        </span>
-                      </Link>
-                    ))
-                  )}
-                </div>
-              </form>
-            </div>
-
             {/* Category Filter */}
             <div className="navbar__sidebar-section">
               <label htmlFor="category-select" className="navbar__sidebar-label">
@@ -434,71 +328,14 @@ const Navbar = () => {
 
         {/* Desktop Search */}
         <div className="navbar__search-desktop">
-          <form onSubmit={handleSearch} className="navbar__search-form" aria-label={t("product_search")}>
-            <div className="navbar__search-container">
-              <div className="navbar__search-input-wrapper">
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder={t("search_placeholder")}
-                  className="navbar__search-input"
-                  aria-label={t("search_products")}
-                  autoComplete="off"
-                  dir={isRtl ? "rtl" : "ltr"}
-                />
-                <svg
-                  className={isRtl ? "navbar__search-icon--rtl" : "navbar__search-icon"}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              </div>
-            </div>
-            <div
-              ref={searchResultsRef}
-              className={
-                searchResults.length > 0 || loading
-                  ? "navbar__search-results--open"
-                  : "navbar__search-results"
-              }
-            >
-              {loading ? (
-                <div className="navbar__search-loading">
-                  <div className="navbar__spinner" />
-                  {t("loading")}
-                </div>
-              ) : searchResults.length === 0 && search.trim() !== "" ? (
-                <div className="navbar__search-no-results">
-                  {t("no_results")}
-                </div>
-              ) : (
-                searchResults.map((product) => (
-                  <Link
-                    to={`/product/${product.id}`}
-                    key={product.id}
-                    className="navbar__search-result-item"
-                  >
-                    <img
-                      src={product.image_url || "/placeholder-image.jpg"}
-                      alt={getTranslatedName(product)}
-                      className="navbar__search-result-image"
-                      width="48"
-                      height="48"
-                    />
-                    <span className="navbar__search-result-name">
-                      {getTranslatedName(product)}
-                    </span>
-                  </Link>
-                ))
-              )}
-            </div>
-          </form>
+          <SearchInput
+            search={search}
+            setSearch={setSearch}
+            category={category}
+            priceRange={priceRange}
+            isRtl={isRtl}
+            searchResultsRef={searchResultsRef}
+          />
         </div>
 
         {/* Desktop Nav Links */}

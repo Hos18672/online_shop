@@ -16,6 +16,7 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
   padding-bottom: 10px;
 
+
   &.rtl {
     direction: rtl;
     text-align: right;
@@ -26,8 +27,22 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: left;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 767px) {
     padding: 1rem;
+  }
+
+  .homepage__search {
+    display: none;
+
+    & .search-input__form {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 767px) {
+      padding: 1rem;
+      padding-bottom: 5px;
+      display: block;
+    }
   }
 }
 
@@ -78,7 +93,7 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 640px) {
-    padding: 0 1rem;
+    padding: 0;
     margin-bottom: 3rem;
   }
 }
@@ -128,7 +143,7 @@ $card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   @media (max-width: 640px) {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 1.5rem;
   }
 }

@@ -19,8 +19,9 @@ const ProductPage = () => {
   } = useWishlistStore();
   const [product, setProduct] = useState(null);
   const [showWishlistAnim, setShowWishlistAnim] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
   const lang = i18n.language || "en";
-  const isRtl = lang === "fa"; // Check for Farsi (RTL)
+  const isRtl = lang === "fa";
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -44,12 +45,16 @@ const ProductPage = () => {
       name: product[`name_${lang}`] || product.name_en,
       price: product.price,
       quantity: 1,
+      image_url: product.image_url || "https://via.placeholder.com/100x100?text=No+Image",
+      description: product[`description_${lang}`] || product.description_en,
     };
     item[`name_en`] = product[`name_en`] || product.name_en || t("unnamed");
     item[`name_de`] = product[`name_de`] || product.name_de || t("unnamed");
     item[`name_fa`] = product[`name_fa`] || product.name_fa || t("unnamed");
-    console.log("Adding item to cart:", item);
     addItem(item);
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000); // Reset after 2s
+    console.log("Added to cart:", item);
   };
 
   const handleWishlistToggle = () => {
@@ -60,14 +65,17 @@ const ProductPage = () => {
         id: product.id,
         name: product[`name_${lang}`] || product.name_en,
         price: product.price,
+        image_url: product.image_url || "https://via.placeholder.com/100x100?text=No+Image",
       });
       setShowWishlistAnim(true);
-      setTimeout(() => setShowWishlistAnim(false), 1000); // Animation duration
+      setTimeout(() => setShowWishlistAnim(false), 1000);
     }
   };
 
   const productName =
     product[`name_${lang}`] || product.name_en || t("unnamed");
+  const productDescription =
+    product[`description_${lang}`] || product.description_en;
 
   return (
     <div
@@ -80,11 +88,7 @@ const ProductPage = () => {
         <title>{productName} - E-commerce</title>
         <meta
           name="description"
-          content={
-            product[`description_${lang}`] ||
-            product.description_en ||
-            t("no_description")
-          }
+          content={productDescription || t("no_description")}
         />
       </Helmet>
       <div className="product-container">
@@ -92,24 +96,22 @@ const ProductPage = () => {
           <img
             src={
               product.image_url ||
-              "https://via.placeholder.com/200x200?text=No+Image"
+              "https://via.placeholder.com/400x400?text=No+Image"
             }
             alt={productName}
-            className="product-card__image"
+            className="product-image"
             loading="lazy"
             onError={(e) =>
               (e.target.src =
-                "https://via.placeholder.com/200x200?text=No+Image")
+                "https://via.placeholder.com/400x400?text=No+Image")
             }
           />
         </div>
         <div className="product-info">
           <h1 className="product-title">{productName}</h1>
-          <p className="product-description">
-            {product[`description_${lang}`] ||
-              product.description_en ||
-              t("no_description")}
-          </p>
+          {productDescription && (
+            <p className="product-description">{productDescription}</p>
+          )}
           <p className="product-price">
             {t("price")}: €{product.price?.toFixed(2) || "N/A"}
           </p>
@@ -121,8 +123,8 @@ const ProductPage = () => {
           <div className="product-actions">
             <button
               onClick={handleAddToCart}
-              className="product-btn-cart"
-              aria-label={`${t("add_to_cart")} ${productName}`}
+              className={`product-btn-cart ${addedToCart ? "added" : ""}`}
+              aria-label={`${t(addedToCart ? "added_to_cart" : "add_to_cart")} ${productName}`}
               type="button"
             >
               <svg
@@ -133,11 +135,17 @@ const ProductPage = () => {
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                {addedToCart ? (
+                  <path d="M5 13l4 4L19 7" />
+                ) : (
+                  <>
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </>
+                )}
               </svg>
-              {t("add_to_cart")}
+              {t(addedToCart ? "added_to_cart" : "add_to_cart")}
             </button>
             <button
               onClick={handleWishlistToggle}

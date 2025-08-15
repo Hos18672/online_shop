@@ -2,6 +2,7 @@
   "welcome": "Willkommen im Shop",
   "cart": "Warenkorb",
   "add_to_cart": "In den Warenkorb",
+  "added_to_cart": "Zum Warenkorb hinzugefügt",
   "search_placeholder": "Nach Produkten suchen...",
   "Home": "Startseite",
   "Products": "Produkte",
@@ -230,3 +231,4 @@
     "singup_with_email": "Mit E-Mail registrieren",
     "signup_with_google": "Mit Google registrieren"
 }
+  

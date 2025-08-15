@@ -8,7 +8,7 @@ const CartPage = () => {
   const { t, i18n } = useTranslation();
   const { items, removeItem, updateQuantity } = useCartStore();
   const lang = i18n.language || 'en';
-  const isRtl = lang === 'fa'; // Check for Farsi (RTL)
+  const isRtl = lang === 'fa';
   console.log('Cart items:', items);
   // Aggregate items by id to combine quantities
   const aggregatedItems = items.reduce((acc, item) => {
@@ -21,7 +21,9 @@ const CartPage = () => {
     return acc;
   }, []);
 
-  const totalPrice = aggregatedItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
+  const totalPrice = aggregatedItems
+    .reduce((acc, item) => acc + item.price * item.quantity, 0)
+    .toFixed(2);
   const productName = (item) => item[`name_${lang}`] || item.name_en || t('unnamed');
 
   return (
@@ -34,9 +36,20 @@ const CartPage = () => {
           <ul className="cart-page__items">
             {aggregatedItems.map((item) => (
               <li key={item.id} className="cart-page__item" role="listitem">
+                <div className="cart-page__item-image-wrapper">
+                  <img
+                    src={item?.image_url}
+                    alt={productName(item)}
+                    className="cart-page__item-image"
+                    loading="lazy"
+                    onError={(e) =>
+                      (e.target.src = 'https://via.placeholder.com/100x100?text=No+Image')
+                    }
+                  />
+                </div>
                 <div className="cart-page__item-details">
                   <span className="cart-page__item-name">{productName(item)}</span>
-                  <p className="cart-page__item-price">{t('price')}: ${item.price.toFixed(2)}</p>
+                  <p className="cart-page__item-price">{t('price')}: €{item.price.toFixed(2)}</p>
                 </div>
                 <div className="cart-page__item-actions">
                   <div className="cart-page__quantity-control">
@@ -57,7 +70,7 @@ const CartPage = () => {
                         <line x1="5" y1="12" x2="19" y2="12" />
                       </svg>
                     </button>
-                    <span className="cart-page__quantity">{t('quantity')}: {item.quantity}</span>
+                    <span className="cart-page__quantity">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
                       className="cart-page__quantity-btn"
@@ -91,15 +104,14 @@ const CartPage = () => {
                     >
                       <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0h8" />
                     </svg>
-                    {t('remove_item')}
                   </button>
                 </div>
               </li>
             ))}
           </ul>
           <div className="cart-page__summary">
-            <p className="cart-page__total">{t('total')}: ${totalPrice}</p>
-      {/* '      <Link
+            <p className="cart-page__total">{t('total')}: €{totalPrice}</p>
+            <Link
               to="/checkout"
               className="cart-page__checkout-btn"
               aria-label={t('proceed_to_checkout')}
@@ -117,7 +129,7 @@ const CartPage = () => {
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
               {t('proceed_to_checkout')}
-            </Link>' */}
+            </Link>
           </div>
         </>
       )}

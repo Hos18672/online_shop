@@ -4,7 +4,14 @@ import { useTranslation } from "react-i18next";
 import { searchProducts } from "../../services/productService";
 import "./../../styles/SearchInput.scss";
 
-const SearchInput = ({ search, setSearch, category, priceRange, isRtl, searchResultsRef }) => {
+const SearchInput = ({
+  search,
+  setSearch,
+  category,
+  priceRange,
+  isRtl,
+  searchResultsRef,
+}) => {
   const { t } = useTranslation();
   const [searchResults, setSearchResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -38,13 +45,20 @@ const SearchInput = ({ search, setSearch, category, priceRange, isRtl, searchRes
   }, [search, category, priceRange]);
 
   const getTranslatedName = (obj) =>
-    obj[`name_${t("i18n.language")}`] || obj.name_en || obj.name || t("unnamed");
+    obj[`name_${t("i18n.language")}`] ||
+    obj.name_en ||
+    obj.name ||
+    t("unnamed");
 
   const handleSearch = (e) => e.preventDefault();
 
   return (
-    <form onSubmit={handleSearch} className="search-input__form" aria-label={t("product_search")}>
-      <div className="search-input__container">
+    <form
+      onSubmit={handleSearch}
+      className="search-input__form"
+      aria-label={t("product_search")}
+    >
+      <div className="search-wrapper">
         <div className="search-input__input-wrapper">
           <input
             type="text"
@@ -69,6 +83,7 @@ const SearchInput = ({ search, setSearch, category, priceRange, isRtl, searchRes
           </svg>
         </div>
       </div>
+
       <div
         ref={searchResultsRef}
         className={
@@ -83,9 +98,7 @@ const SearchInput = ({ search, setSearch, category, priceRange, isRtl, searchRes
             {t("loading")}
           </div>
         ) : searchResults.length === 0 && search.trim() !== "" ? (
-          <div className="search-input__no-results">
-            {t("no_results")}
-          </div>
+          <div className="search-input__no-results">{t("no_results")}</div>
         ) : (
           searchResults.map((product) => (
             <Link

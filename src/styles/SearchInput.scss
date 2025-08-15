@@ -1,5 +1,45 @@
+$primary-green: #00a651;
+$secondary-green: #00b359;
+$light-green: #e8f5e8;
+$dark-green: #008040;
+$pharmacy-blue: #0066cc;
+$text-primary: #2d3748;
+$text-secondary: #718096;
+$text-light: #a0aec0;
+$border-color: #e2e8f0;
+$bg-light: #f7fafc;
+$white: #ffffff;
+$shadow-light: rgba(0, 0, 0, 0.05);
+$shadow-medium: rgba(0, 0, 0, 0.1);
+$shadow-strong: rgba(0, 0, 0, 0.15);
+
+
+ .search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: $white;
+    border: 2px solid $border-color;
+    border-radius: 50px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px $shadow-light;
+
+    &:hover {
+      border-color: $primary-green;
+      box-shadow: 0 4px 12px $shadow-medium;
+    }
+
+    &:focus-within {
+      border-color: $primary-green;
+      box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+    }
+  }
+
+
 .search-input__form {
   position: relative;
+  width: 100%;
 
   @media (max-width: 767px) {
     margin-bottom: 16px;
@@ -33,7 +73,7 @@
 .search-input__input {
   flex: 1;
   padding: 12px 48px 12px 16px;
-  border: 1px solid #e2e8f0;
+  border:none;
   border-radius: 8px;
   background-color: #f7fafc;
   font-size: 16px;

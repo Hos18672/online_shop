@@ -17,7 +17,6 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [currentLangFlag, setCurrentLangFlag] = useState(flagEN);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -31,7 +30,6 @@ const Navbar = () => {
   const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
   const lang = i18n.language || "en";
   const isRtl = lang === "fa";
-  console.log(`test`);
 
   // Clear search results and close sidebar on route change
   useEffect(() => {
@@ -71,7 +69,7 @@ const Navbar = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [sidebarOpen]);
 
   // Fetch categories
   useEffect(() => {
@@ -97,7 +95,6 @@ const Navbar = () => {
     setSidebarOpen(false);
   };
 
-  // Get the correct flag dynamically
   const getFlagForLang = (lang) => {
     if (lang === "en") return flagEN;
     if (lang === "de") return flagDE;
@@ -124,7 +121,7 @@ const Navbar = () => {
       <div className="navbar__topbar">
         <div className="navbar__topbar-container">
           <div className="navbar__topbar-left">
-             <span className="navbar__topbar-text">
+            <span className="navbar__topbar-text">
               {t("customer_service")} : 0800 200 800
             </span>
           </div>
@@ -143,13 +140,8 @@ const Navbar = () => {
                   className="navbar__flag-icon"
                 />
                 <span className="navbar__lang-text">
-                  {i18n.language === "en"
-                    ? "EN"
-                    : i18n.language === "de"
-                      ? "DE"
-                      : "FA"}
+                  {t(i18n.language === "en" ? "EN" : i18n.language === "de" ? "DE" : "FA")}
                 </span>
-
                 <svg
                   className={`navbar__lang-arrow ${langDropdownOpen ? "navbar__lang-arrow--open" : ""}`}
                   xmlns="http://www.w3.org/2000/svg"
@@ -165,10 +157,10 @@ const Navbar = () => {
                 <ul className="navbar__lang-dropdown">
                   <li
                     className="navbar__lang-option"
-                    onClick={(e) =>{
-                       e.stopPropagation(); 
-                       changeLanguage("en")}
-                    } 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("en");
+                    }}
                   >
                     <img
                       src={flagEN}
@@ -179,11 +171,10 @@ const Navbar = () => {
                   </li>
                   <li
                     className="navbar__lang-option"
-                    onClick={(e) =>{
-                       e.stopPropagation(); 
-                       changeLanguage("de")
-                      }
-                     }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("de");
+                    }}
                   >
                     <img
                       src={flagDE}
@@ -194,10 +185,10 @@ const Navbar = () => {
                   </li>
                   <li
                     className="navbar__lang-option"
-                    onClick={(e) =>{
-                       e.stopPropagation(); 
-                       changeLanguage("fa")
-                      }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("fa");
+                    }}
                   >
                     <img
                       src={flagFA}
@@ -321,10 +312,18 @@ const Navbar = () => {
             >
               {t("home")}
             </NavLink>
-            {categories.slice(0, 6).map((cat) => (
+            <NavLink
+              to="/products"
+              className={({ isActive }) =>
+                `navbar__category-link ${isActive ? "navbar__category-link--active" : ""}`
+              }
+            >
+              {t("products")}
+            </NavLink>
+            {categories.slice(0, 5).map((cat) => (
               <NavLink
                 key={cat.id}
-                to={`/category/${cat.id}`}
+                to={`/products/${cat.id}`}
                 className={({ isActive }) =>
                   `navbar__category-link ${isActive ? "navbar__category-link--active" : ""}`
                 }
@@ -332,6 +331,14 @@ const Navbar = () => {
                 {getTranslatedName(cat)}
               </NavLink>
             ))}
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                `navbar__category-link ${isActive ? "navbar__category-link--active" : ""}`
+              }
+            >
+              {t("wishlist")}
+            </NavLink>
             {isSignedIn && (
               <NavLink
                 to="/admin/dashboard"
@@ -375,20 +382,6 @@ const Navbar = () => {
             </svg>
           </button>
         </div>
-
-        {/* Mobile Search */}
-        <div className="navbar__sidebar-search">
-          <SearchInput
-            search={search}
-            setSearch={setSearch}
-            category={category}
-            priceRange={priceRange}
-            isRtl={isRtl}
-            searchResultsRef={searchResultsRef}
-            className="navbar__search-mobile"
-          />
-        </div>
-
         <div className="navbar__sidebar-content">
           {/* Navigation Links */}
           <div className="navbar__sidebar-section">
@@ -408,6 +401,19 @@ const Navbar = () => {
               </li>
               <li>
                 <NavLink
+                  to="/products"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "navbar__sidebar-link navbar__sidebar-link--active"
+                      : "navbar__sidebar-link"
+                  }
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {t("products")}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
                   to="/cart"
                   className={({ isActive }) =>
                     isActive
@@ -417,6 +423,19 @@ const Navbar = () => {
                   onClick={() => setSidebarOpen(false)}
                 >
                   {t("cart")} {totalCount ? `(${totalCount})` : ""}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/wishlist"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "navbar__sidebar-link navbar__sidebar-link--active"
+                      : "navbar__sidebar-link"
+                  }
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {t("wishlist")}
                 </NavLink>
               </li>
               {isSignedIn && (
@@ -444,8 +463,12 @@ const Navbar = () => {
               {categories.map((cat) => (
                 <li key={cat.id}>
                   <NavLink
-                    to={`/category/${cat.id}`}
-                    className="navbar__sidebar-link"
+                    to={`/products/${cat.id}`}
+                    className={({ isActive }) =>
+                      isActive
+                        ? "navbar__sidebar-link navbar__sidebar-link--active"
+                        : "navbar__sidebar-link"
+                    }
                     onClick={() => setSidebarOpen(false)}
                   >
                     {getTranslatedName(cat)}
@@ -478,6 +501,82 @@ const Navbar = () => {
                 {t("sign_in")}
               </NavLink>
             )}
+          </div>
+          <div className="navbar__topbar-right">
+            {/* Language Switcher */}
+            <div className="navbar__lang-switcher" ref={langDropdownRef}>
+              <button
+                className="navbar__lang-btn"
+                onClick={toggleLangDropdown}
+                aria-haspopup="true"
+                aria-expanded={langDropdownOpen}
+              >
+                <img
+                  src={getFlagForLang(i18n.language)}
+                  alt="Language"
+                  className="navbar__flag-icon"
+                />
+                <span className="navbar__lang-text">
+                  {t(i18n.language === "en" ? "EN" : i18n.language === "de" ? "DE" : "FA")}
+                </span>
+                <svg
+                  className={`navbar__lang-arrow ${langDropdownOpen ? "navbar__lang-arrow--open" : ""}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {langDropdownOpen && (
+                <ul className="navbar__lang-dropdown">
+                  <li
+                    className="navbar__lang-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("en");
+                    }}
+                  >
+                    <img
+                      src={flagEN}
+                      alt="English"
+                      className="navbar__flag-icon"
+                    />
+                    English
+                  </li>
+                  <li
+                    className="navbar__lang-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("de");
+                    }}
+                  >
+                    <img
+                      src={flagDE}
+                      alt="Deutsch"
+                      className="navbar__flag-icon"
+                    />
+                    Deutsch
+                  </li>
+                  <li
+                    className="navbar__lang-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeLanguage("fa");
+                    }}
+                  >
+                    <img
+                      src={flagFA}
+                      alt="فارسی"
+                      className="navbar__flag-icon"
+                    />
+                    فارسی
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </div>

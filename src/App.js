@@ -1,24 +1,26 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { ClerkProvider } from '@clerk/clerk-react';
-import { I18nextProvider } from 'react-i18next';
-import i18n from './i18n/i18n';
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
-import HomePage from './pages/HomePage';
-import ProductPage from './pages/ProductPage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import WishlistPage from './pages/WishlistPage';
-import AuthPage from './pages/AuthPage';
-import Dashboard from './pages/Admin/Dashboard';
-import ProductsManager from './pages/Admin/ProductsManager';
-import CategoriesManager from './pages/Admin/CategoriesManager';
-import OrdersManager from './pages/Admin/OrdersManager';
-import ProtectedRoute from './routes/ProtectedRoute';
-import AdminRoute from './routes/AdminRoute';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ClerkProvider } from "@clerk/clerk-react";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n/i18n";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import HomePage from "./pages/HomePage";
+import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import WishlistPage from "./pages/WishlistPage";
+import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Admin/Dashboard";
+import ProductsManager from "./pages/Admin/ProductsManager";
+import CategoriesManager from "./pages/Admin/CategoriesManager";
+import OrdersManager from "./pages/Admin/OrdersManager";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminRoute from "./routes/AdminRoute";
 
-const clerkPubKey ='pk_test_ZmluZXItZXNjYXJnb3QtMjcuY2xlcmsuYWNjb3VudHMuZGV2JA';
+
+const clerkPubKey =
+  "pk_test_ZmluZXItZXNjYXJnb3QtMjcuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
 const App = () => {
   return (

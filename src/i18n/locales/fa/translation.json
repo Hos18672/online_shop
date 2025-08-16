@@ -229,5 +229,16 @@
   "email": "ایمیل",
   "password": "رمز عبور",
   "singup_with_email": "ثبت‌ نام با ایمیل",
-  "signup_with_google": "ثبت‌ نام با گوگل"
+  "signup_with_google": "ثبت‌ نام با گوگل",
+  "price_range": "محدوده قیمت",
+  "filter_by_category": "فیلتر بر اساس دسته‌بندی", 
+  "filter_by_price": "فیلتر بر اساس قیمت",
+  "default": "پیش‌ فرض",
+  "name_a_z": "نام: الف تا ی",
+  "filters": "فیلترها", 
+  "product_name": "نام محصول",
+  "image": "تصویر",
+  "admin_categories": "دسته‌بندی‌های مدیر",
+  "actions": "اقدامات"
+  
 }

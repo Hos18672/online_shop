@@ -219,6 +219,18 @@
   "email": "Email",
   "password": "Password",
   "singup_with_email": "Sign up with Email",
-  "signup_with_google": "Sign up with Google"
+  "signup_with_google": "Sign up with Google",
+  "price_range": "Price Range",
+  "filter_by_category": "Filter by Category",
+  "filter_by_price": "Filter by Price",
+  "default": "Default",
+  "name_a_z": "Name: A-Z",
+  "search_no_results": "No results for your search",
+  "search_results_count": "{{count}} results found",
+  "filters": "Filters",
+  "product_name": "Product Name",
+  "image": "Image",
+  "actions": "Actions"
+
 
 }

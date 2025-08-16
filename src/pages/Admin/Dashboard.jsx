@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import Spinner from './../../components/common/Spinner';
-import { getProducts, getOrders, deleteProduct, updateProduct } from '../../services/productService';
+import Spinner from '../../components/common/Spinner';
+import { getProducts, deleteProduct, updateProduct } from '../../services/productService';
 import { getCategories, deleteCategory, updateCategory } from '../../services/categoryService';
 import ProductsManager from './ProductsManager';
 import CategoriesManager from './CategoriesManager';
@@ -19,6 +18,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [operationLoading, setOperationLoading] = useState(false);
   const lang = i18n.language || 'en';
   const isRtl = lang === 'fa';
 
@@ -26,110 +26,132 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [productsData, , categoriesData] = await Promise.all([
+        const [productsData, categoriesData] = await Promise.all([
           getProducts(),
-          getOrders(),
           getCategories(),
         ]);
         setProducts(productsData);
         setCategories(categoriesData);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError(t('error_fetching_data'));
+      } finally {
         setLoading(false);
       }
     };
     fetchData();
   }, [t]);
 
-  const handleDeleteProduct = async (productId) => {
+  const handleDeleteProduct = useCallback(async (productId) => {
     if (window.confirm(t('confirm_delete_product'))) {
+      setOperationLoading(true);
       try {
         await deleteProduct(productId);
-        setProducts(products.filter((p) => p.id !== productId));
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
       } catch (error) {
         console.error('Error deleting product:', error);
         setError(t('error_deleting_product'));
+      } finally {
+        setOperationLoading(false);
       }
     }
-  };
+  }, [t]);
 
-  const handleDeleteCategory = async (categoryId) => {
+  const handleDeleteCategory = useCallback(async (categoryId) => {
     if (window.confirm(t('confirm_delete_category'))) {
+      setOperationLoading(true);
       try {
         await deleteCategory(categoryId);
-        setCategories(categories.filter((c) => c.id !== categoryId));
+        setCategories((prev) => prev.filter((c) => c.id !== categoryId));
       } catch (error) {
         console.error('Error deleting category:', error);
         setError(t('error_deleting_category'));
+      } finally {
+        setOperationLoading(false);
       }
     }
-  };
+  }, [t]);
 
-  const handleEditProduct = (product) => {
-    setEditProduct({ ...product }); // Set the product to edit
-  };
+  const handleEditProduct = useCallback((product) => {
+    setEditProduct({ ...product });
+  }, []);
 
-  const handleEditCategory = (category) => {
-    setEditCategory({ ...category }); // Set the category to edit
-  };
+  const handleEditCategory = useCallback((category) => {
+    setEditCategory({ ...category });
+  }, []);
 
-  const handleSaveProduct = async (updatedProduct) => {
+  const handleSaveProduct = useCallback(async (updatedProduct) => {
+    setOperationLoading(true);
     try {
       await updateProduct(updatedProduct.id, {
         name_en: updatedProduct.name_en,
+        name_de: updatedProduct.name_de,
         name_fa: updatedProduct.name_fa,
         price: updatedProduct.price,
         stock: updatedProduct.stock,
         image_url: updatedProduct.image_url,
+        category_id: updatedProduct.category_id,
       });
-      setProducts(products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
+      setProducts((prev) =>
+        prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+      );
       setEditProduct(null);
     } catch (error) {
       console.error('Error updating product:', error);
       setError(t('error_updating_product'));
+    } finally {
+      setOperationLoading(false);
     }
-  };
+  }, [t]);
 
-  const handleSaveCategory = async (updatedCategory) => {
+  const handleSaveCategory = useCallback(async (updatedCategory) => {
+    setOperationLoading(true);
     try {
       await updateCategory(updatedCategory.id, {
         name_en: updatedCategory.name_en,
+        name_de: updatedCategory.name_de,
         name_fa: updatedCategory.name_fa,
       });
-      setCategories(categories.map((c) => (c.id === updatedCategory.id ? updatedCategory : c)));
+      setCategories((prev) =>
+        prev.map((c) => (c.id === updatedCategory.id ? updatedCategory : c))
+      );
       setEditCategory(null);
     } catch (error) {
       console.error('Error updating category:', error);
       setError(t('error_updating_category'));
+    } finally {
+      setOperationLoading(false);
     }
-  };
+  }, [t]);
 
-  const filteredProducts = products.filter((product) => {
-    const name = product[`name_${lang}`] || product.name_en || '';
-    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || product.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const name = product[`name_${lang}`] || product.name_en || '';
+      const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = !selectedCategory || product.category_id === parseInt(selectedCategory);
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory, lang]);
 
   if (loading) return <Spinner />;
   if (error) return <div className="dashboard__error">{error}</div>;
 
   return (
-    <div className="dashboard" dir={isRtl ? 'rtl' : 'ltr'} role="main" aria-label={t('admin_dashboard')}>
+    <div className={`dashboard ${isRtl ? 'rtl' : 'ltr'}`} role="main" aria-label={t('admin_dashboard')}>
       <header className="dashboard__header">
         <h1 className="dashboard__title">{t('admin_dashboard')}</h1>
-        <nav className="dashboard__tabs" aria-label="Dashboard tabs">
+        <nav className="dashboard__tabs" aria-label={t('dashboard_tabs')}>
           <button
             className={`dashboard__tab ${activeTab === 'products' ? 'dashboard__tab--active' : ''}`}
             onClick={() => setActiveTab('products')}
+            disabled={operationLoading}
           >
             {t('admin_products')} ({products.length})
           </button>
           <button
             className={`dashboard__tab ${activeTab === 'categories' ? 'dashboard__tab--active' : ''}`}
             onClick={() => setActiveTab('categories')}
+            disabled={operationLoading}
           >
             {t('admin_categories')} ({categories.length})
           </button>
@@ -145,11 +167,13 @@ const Dashboard = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="dashboard__search-input"
+                disabled={operationLoading}
               />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="dashboard__category-filter"
+                disabled={operationLoading}
               >
                 <option value="">{t('all_categories')}</option>
                 {categories.map((category) => (
@@ -188,12 +212,14 @@ const Dashboard = () => {
                         <button
                           className="dashboard__action-btn dashboard__edit-btn"
                           onClick={() => handleEditProduct(product)}
+                          disabled={operationLoading}
                         >
                           {t('edit')}
                         </button>
                         <button
                           className="dashboard__action-btn dashboard__delete-btn"
                           onClick={() => handleDeleteProduct(product.id)}
+                          disabled={operationLoading}
                         >
                           {t('delete')}
                         </button>
@@ -227,12 +253,14 @@ const Dashboard = () => {
                           <button
                             className="dashboard__action-btn dashboard__edit-btn"
                             onClick={() => handleEditCategory(category)}
+                            disabled={operationLoading}
                           >
                             {t('edit')}
                           </button>
                           <button
                             className="dashboard__action-btn dashboard__delete-btn"
                             onClick={() => handleDeleteCategory(category.id)}
+                            disabled={operationLoading}
                           >
                             {t('delete')}
                           </button>
@@ -246,27 +274,25 @@ const Dashboard = () => {
           </section>
         )}
 
-        {/* Product Edit Modal */}
         {editProduct && (
-          <div className="dashboard__modal-overlay" onClick={() => setEditProduct(null)}>
+          <div className="dashboard__modal-overlay" onClick={() => !operationLoading && setEditProduct(null)}>
             <div className="dashboard__modal" onClick={(e) => e.stopPropagation()}>
               <ProductsManager
                 product={editProduct}
                 onSave={handleSaveProduct}
-                onCancel={() => setEditProduct(null)}
+                onCancel={() => !operationLoading && setEditProduct(null)}
               />
             </div>
           </div>
         )}
 
-        {/* Category Edit Modal */}
         {editCategory && (
-          <div className="dashboard__modal-overlay" onClick={() => setEditCategory(null)}>
+          <div className="dashboard__modal-overlay" onClick={() => !operationLoading && setEditCategory(null)}>
             <div className="dashboard__modal" onClick={(e) => e.stopPropagation()}>
               <CategoriesManager
                 category={editCategory}
                 onSave={handleSaveCategory}
-                onCancel={() => setEditCategory(null)}
+                onCancel={() => !operationLoading && setEditCategory(null)}
               />
             </div>
           </div>

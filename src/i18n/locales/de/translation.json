@@ -229,6 +229,16 @@
     "signin_with_google": "Mit Google anmelden",
     "signin_with_facebook": "Mit Facebook anmelden",
     "singup_with_email": "Mit E-Mail registrieren",
-    "signup_with_google": "Mit Google registrieren"
+    "signup_with_google": "Mit Google registrieren",
+    "price_range": "Preisspanne",
+    "filter_by_category": "Nach Kategorie filtern",
+    "filter_by_price": "Nach Preis filtern",
+    "default": "Standard",
+    "name_a_z": "Name: A-Z",
+    "filters": "Filter",
+    "product_name": "Produktname",
+    "image": "Bild",
+    "admin_categories": "Admin-Kategorien",
+    "actions": "Aktionen"
 }
   

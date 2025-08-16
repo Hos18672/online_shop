@@ -17,6 +17,7 @@ import CategoriesManager from './pages/Admin/CategoriesManager';
 import OrdersManager from './pages/Admin/OrdersManager';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
+import Products from './pages/Products'; // Capital 'P' to match file name
 import ReactDOM from 'react-dom/client';
 import './styles/main.scss';
 
@@ -27,12 +28,28 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ClerkProvider publishableKey={clerkPubKey}>
       <BrowserRouter>
         <I18nextProvider i18n={i18n}>
-            <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/product/:id" element={<ProductPage />} />
+                <Route
+                  path="/products"
+                  element={
+                    <ProtectedRoute>
+                      <Products />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/products/:categoryId"
+                  element={
+                    <ProtectedRoute>
+                      <Products />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/cart"
                   element={
